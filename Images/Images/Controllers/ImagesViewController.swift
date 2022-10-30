@@ -16,6 +16,7 @@ final class ImagesViewController: UIViewController {
         static let titleText = "ImagesIOS"
         static let whiteColorName = "WhiteColor"
         static let imagesCollectionViewCellText = "imagesMovieCollectionViewCell"
+        static let setID: [String] = ["id1", "id2", "id3", "id4", "id5", "id6"]
     }
     
     // MARK: - Private Visual Properties
@@ -32,8 +33,10 @@ final class ImagesViewController: UIViewController {
         return collectionView
     }()
     
+    private let refreshControl = UIRefreshControl()
+    
     // MARK: - Private Properties
-    private var items: [String] = ["id1", "id2", "id3", "id4", "id5", "id6"]
+    private var items = Constants.setID
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -42,12 +45,20 @@ final class ImagesViewController: UIViewController {
     }
     
     // MARK: - Private Methods
+    @objc private func refreshAction() {
+        items = Constants.setID
+        imagesCollectionView.reloadData()
+        refreshControl.endRefreshing()
+    }
+    
     private func setupView() {
         title = Constants.titleText
         view.backgroundColor = UIColor(named: Constants.whiteColorName)
+        refreshControl.addTarget(self, action: #selector(refreshAction), for: .valueChanged)
         imagesCollectionView.dataSource = self
         imagesCollectionView.delegate = self
         view.addSubview(imagesCollectionView)
+        imagesCollectionView.addSubview(refreshControl)
         createImagesCollectionViewConstraint()
     }
     
@@ -84,7 +95,7 @@ extension ImagesViewController: UICollectionViewDelegate, UICollectionViewDataSo
        let cell = collectionView.cellForItem(at: indexPath) as? ImagesCollectionViewCell
         cell?.leadingAnchorImageImageView.constant = collectionView.frame.width
         cell?.trailingAnchorImageImageView.constant = collectionView.frame.width
-        UIView.animate(withDuration: 2, delay: 0.0, options: .allowAnimatedContent) {
+        UIView.animate(withDuration: 2) {
             cell?.contentView.layoutIfNeeded()
         } completion: { _ in
             guard indexPath.row < self.items.count else { return }

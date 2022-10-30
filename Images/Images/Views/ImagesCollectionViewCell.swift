@@ -32,12 +32,13 @@ class ImagesCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
+    // MARK: - Public Properties
+    lazy var leadingAnchorImageImageView = imageImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 0)
+    
+    lazy var trailingAnchorImageImageView = imageImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: 0)
+    
     // MARK: - Private Properties
     private let cache = NSCache<NSString, UIImage>()
-    
-     lazy var leadingAnchorImageImageView = imageImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 0)
-    
-     lazy var trailingAnchorImageImageView = imageImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: 0)
     
     // MARK: - Initializers
     override init(frame: CGRect) {
@@ -68,15 +69,6 @@ class ImagesCollectionViewCell: UICollectionViewCell {
             }
         }
     }
-    
-    func doAnimation(width: CGFloat, completion1: ((Bool) -> ())?) {
-        leadingAnchorImageImageView.constant = width
-        trailingAnchorImageImageView.constant = width
-        UIView.animate(withDuration: 2, animations: { self.contentView.layoutIfNeeded() }, completion: completion1)
-                   leadingAnchorImageImageView.constant = 0
-                   trailingAnchorImageImageView.constant = 0
-    }
-
     
     // MARK: - Private Methods
     private func initView() {
