@@ -69,7 +69,7 @@ extension ImagesViewController: UICollectionViewDelegate, UICollectionViewDataSo
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.imagesCollectionViewCellText, for: indexPath) as? ImagesCollectionViewCell
         else { return UICollectionViewCell() }
-        cell.configureImagesCollectionViewCell()
+        cell.configureImagesCollectionViewCell(numberRow: indexPath.row)
         return cell
     }
 
