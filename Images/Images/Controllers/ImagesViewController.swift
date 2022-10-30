@@ -32,6 +32,9 @@ final class ImagesViewController: UIViewController {
         return collectionView
     }()
     
+    // MARK: - Private Properties
+    private var items: [String] = ["id1", "id2", "id3", "id4", "id5", "id6"]
+    
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -63,17 +66,32 @@ final class ImagesViewController: UIViewController {
 
 extension ImagesViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        6
+        return items.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.imagesCollectionViewCellText, for: indexPath) as? ImagesCollectionViewCell
         else { return UICollectionViewCell() }
-        cell.configureImagesCollectionViewCell(numberRow: indexPath.row)
+        cell.configureImagesCollectionViewCell(idCell: items[indexPath.row])
         return cell
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         CGSize(width: collectionView.frame.width, height: collectionView.frame.width)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+       let cell = collectionView.cellForItem(at: indexPath) as? ImagesCollectionViewCell
+        cell?.leadingAnchorImageImageView.constant = collectionView.frame.width
+        cell?.trailingAnchorImageImageView.constant = collectionView.frame.width
+        UIView.animate(withDuration: 2, delay: 0.0, options: .allowAnimatedContent) {
+            cell?.contentView.layoutIfNeeded()
+        } completion: { _ in
+            guard indexPath.row < self.items.count else { return }
+            self.items.remove(at: indexPath.row)
+            collectionView.deleteItems(at: [indexPath])
+            cell?.leadingAnchorImageImageView.constant = 0
+            cell?.trailingAnchorImageImageView.constant = 0
+        }
     }
 }
