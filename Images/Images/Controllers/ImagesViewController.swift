@@ -32,9 +32,6 @@ final class ImagesViewController: UIViewController {
         return collectionView
     }()
     
-    // MARK: - Private Properties
-    let colors: [UIColor] = [.red, .orange, .yellow, .green, .blue, .purple]
-    
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -72,7 +69,7 @@ extension ImagesViewController: UICollectionViewDelegate, UICollectionViewDataSo
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.imagesCollectionViewCellText, for: indexPath) as? ImagesCollectionViewCell
         else { return UICollectionViewCell() }
-        cell.configureImagesCollectionViewCell(color: colors[indexPath.row])
+        cell.configureImagesCollectionViewCell()
         return cell
     }
 

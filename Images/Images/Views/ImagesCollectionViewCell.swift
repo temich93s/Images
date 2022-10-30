@@ -14,10 +14,15 @@ class ImagesCollectionViewCell: UICollectionViewCell {
     // MARK: - Constants
     private enum Constants {
         static let fatalErrorText = "init(coder:) has not been implemented"
+        static let placeholderImageName = "PlaceholderImage"
     }
     
     // MARK: - Private Visual Properties
-    private let imageImageView = UIImageView()
+    private let imageImageView: UIImageView = {
+       let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFill
+        return imageView
+    }()
     
     // MARK: - Initializers
     override init(frame: CGRect) {
@@ -31,8 +36,16 @@ class ImagesCollectionViewCell: UICollectionViewCell {
     }
     
     // MARK: - Public Methods
-    func configureImagesCollectionViewCell(color: UIColor) {
-        imageImageView.backgroundColor = color
+    func configureImagesCollectionViewCell() {
+        imageImageView.image = UIImage(named: Constants.placeholderImageName)
+        guard let url = URL(string: "https://picsum.photos/800") else { return }
+        DispatchQueue.global().async {
+            let data = try? Data(contentsOf: url)
+            DispatchQueue.main.async {
+                guard let safeData = data else { return }
+                self.imageImageView.image = UIImage(data: safeData)
+            }
+        }
     }
     
     // MARK: - Private Methods
