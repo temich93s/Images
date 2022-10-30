@@ -15,6 +15,7 @@ class ImagesCollectionViewCell: UICollectionViewCell {
     private enum Constants {
         static let fatalErrorText = "init(coder:) has not been implemented"
         static let placeholderImageName = "PlaceholderImage"
+        static let picsumPhotosText = "https://picsum.photos/800"
     }
     
     // MARK: - Private Visual Properties
@@ -34,6 +35,10 @@ class ImagesCollectionViewCell: UICollectionViewCell {
     // MARK: - Private Properties
     private let cache = NSCache<NSString, UIImage>()
     
+     lazy var leadingAnchorImageImageView = imageImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 0)
+    
+     lazy var trailingAnchorImageImageView = imageImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: 0)
+    
     // MARK: - Initializers
     override init(frame: CGRect) {
         super.init(frame: .zero)
@@ -46,23 +51,32 @@ class ImagesCollectionViewCell: UICollectionViewCell {
     }
     
     // MARK: - Public Methods
-    func configureImagesCollectionViewCell(numberRow: Int) {
-        numberRowLabel.text = "\(numberRow)"
-        if let cachedImage = cache.object(forKey: "\(numberRow)" as NSString) {
+    func configureImagesCollectionViewCell(idCell: String) {
+        numberRowLabel.text = "\(idCell)"
+        if let cachedImage = cache.object(forKey: "\(idCell)" as NSString) {
             imageImageView.image = cachedImage
         } else {
             imageImageView.image = UIImage(named: Constants.placeholderImageName)
-            guard let url = URL(string: "https://picsum.photos/800") else { return }
+            guard let url = URL(string: Constants.picsumPhotosText) else { return }
             DispatchQueue.global().async {
                 let data = try? Data(contentsOf: url)
                 DispatchQueue.main.async {
                     guard let safeData = data, let imageCell = UIImage(data: safeData) else { return }
                     self.imageImageView.image = imageCell
-                    self.cache.setObject(imageCell, forKey: "\(numberRow)" as NSString)
+                    self.cache.setObject(imageCell, forKey: "\(idCell)" as NSString)
                 }
             }
         }
     }
+    
+    func doAnimation(width: CGFloat, completion1: ((Bool) -> ())?) {
+        leadingAnchorImageImageView.constant = width
+        trailingAnchorImageImageView.constant = width
+        UIView.animate(withDuration: 2, animations: { self.contentView.layoutIfNeeded() }, completion: completion1)
+                   leadingAnchorImageImageView.constant = 0
+                   trailingAnchorImageImageView.constant = 0
+    }
+
     
     // MARK: - Private Methods
     private func initView() {
@@ -75,16 +89,16 @@ class ImagesCollectionViewCell: UICollectionViewCell {
         imageImageView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             imageImageView.topAnchor.constraint(equalTo: contentView.topAnchor),
-            imageImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            imageImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            imageImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+            imageImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            leadingAnchorImageImageView,
+            trailingAnchorImageImageView
         ])
         
         numberRowLabel.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             numberRowLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
             numberRowLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            numberRowLabel.widthAnchor.constraint(equalToConstant: 20),
+            numberRowLabel.widthAnchor.constraint(equalToConstant: 30),
             numberRowLabel.heightAnchor.constraint(equalToConstant: 20)
         ])
     }
